@@ -1,0 +1,5 @@
+shipment_line_id,order_line_id,shipped_qty,ship_date
+S1,O1,6,2026-01-09
+S2,O1,4,2026-01-11
+S3,O2,15,2026-01-12
+S4,O4,5,2026-02-01

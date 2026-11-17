@@ -1,70 +1,61 @@
 # Wholesale Inventory & Fulfillment Analytics
 ### A Zaryn Data Engineering Portfolio Showcase
 
-A planned Microsoft-based demonstration for connecting inventory, purchasing, sales orders, and shipment data across a wholesale distribution business.
-
-> Status: Design-stage portfolio demonstration. This repository currently contains a project brief, proposed architecture, and metric definitions. Executable pipelines, datasets, reports, and validation results are not yet included. This is not a client deployment.
+A runnable local Python starter for order-fulfillment analytics, with synthetic CSV data and automated tests. The broader Microsoft inventory and fulfillment architecture remains a design target. This is not a client deployment.
 
 ## Business Problem
 
-Purchasing, sales, and warehouse teams need a consistent view of stock, outstanding demand, supplier receipts, and fulfillment exceptions without repeatedly combining spreadsheets.
+Purchasing, sales, and warehouse teams need consistent definitions of outstanding demand, partial fulfillment, and on-time performance. This starter demonstrates those rules on a deliberately small, inspectable dataset.
 
-## Intended Users
+## Run Locally
 
-- Purchasing managers reviewing supply and inventory exposure
-- Warehouse managers reviewing stock and fulfillment exceptions
-- Sales operations teams reviewing open orders and backorders
+Use Python 3.10 or later. No third-party packages or cloud account are required. From the repository root:
 
-## Proposed First Release
+```bash
+python pipeline.py --as-of 2026-01-31
+python -m unittest -v
+```
 
-- Synthetic products, warehouses, inventory snapshots, order lines, receipts, and shipment lines
-- Documented source-to-target transformations
-- Inventory and order fulfillment analytical models
-- Data-quality and reconciliation checks
-- Power BI report with warehouse and product filters
-- One exception notification workflow; no automatic purchasing actions
+The pipeline writes `output/fulfillment.csv`, replacing that file on rerun. Choose a dedicated output directory with `--target` if needed. Do not point this starter at customer data.
 
-## Proposed Microsoft Architecture
+## Included Implementation
 
-Synthetic SQL Server tables and CSV extracts → Azure Data Factory → Azure Data Lake Storage → SQL/Python transformations → SQL Server analytical tables → Power BI
+- `pipeline.py`: CSV ingestion, quantity and key validation, and order-line fulfillment calculations
+- `data/sample/orders.csv`: four fictional order lines across two warehouses
+- `data/sample/shipments.csv`: four fictional shipment lines
+- `test_pipeline.py`: five standard-library unit tests
 
-Power Automate is a proposed option for exception notifications. This is a batch analytics design, not a real-time inventory reservation system.
+All sample records are fabricated for this project; they contain no customer data. Quantities are integer base units. Orders are a fixed snapshot, not a historical change log. Use the supplied cutoff for the documented expected results. Other cutoffs filter shipments and due dates but cannot reconstruct past cancellations or order creation.
 
-## Business Questions
+## Expected Results for the Supplied Sample
 
-1. What stock is on hand by product and warehouse?
-2. Which orders have outstanding quantities?
-3. Which due order lines were fulfilled by their promised date?
-4. Which products have low recent shipment activity?
+At 2026-01-31, eligible due quantity is 25 units and on-time filled quantity is 21 units: quantity fill rate is 84%. One of two eligible due lines is complete on time: line completion rate is 50%. Sum numerators and denominators before calculating rates; do not average row-level percentages.
 
-## Documentation
+The example includes a partial on-time shipment, a late shipment, a partly cancelled order, a fully cancelled order, and a future shipment excluded by the cutoff.
 
-- [Architecture and implementation plan](docs/architecture.md)
-- [Metric definitions](docs/metric-definitions.md)
+## Local Validation
 
-## Implementation Roadmap
+Five tests passed in the development sandbox before publication: expected metrics, duplicate shipment rejection, unknown order rejection, negative quantity rejection, and deterministic output on rerun. This is not evidence of SQL Server, Azure, Fabric, or Power BI deployment. The pipeline is an in-memory batch starter, not a production transactional publication system.
 
-- [x] Define project scope and metric rules
-- [ ] Generate reproducible synthetic source data
-- [ ] Implement SQL Server source and target schemas
-- [ ] Implement ingestion and incremental processing
-- [ ] Add automated quality and reconciliation tests
-- [ ] Build the Power BI model and report
-- [ ] Document deployment, operating costs, and recovery
-- [ ] Publish measured test results and screenshots
+## Design Documents
 
-## Validation Plan
+- [Proposed Microsoft architecture](docs/architecture.md)
+- [Broader metric definitions](docs/metric-definitions.md)
 
-Test partial shipments, cancellations, returns, duplicate records, late-arriving shipments, missing product references, and unit-of-measure conversions. Reconcile source quantities to curated quantities and demonstrate a safe rerun without duplicate outputs. No validation results are claimed yet.
+These documents describe the wider target. Inventory snapshots, receipts, unit conversions, returns, cloud orchestration, alerting, and Power BI reports are not implemented in this starter.
 
-## Run Status
+## Next Implementation Steps
 
-There is no executable end-to-end demo in this version. Azure resources and Power BI artifacts have not been deployed or validated through this repository.
+- Add inventory snapshots and purchasing datasets
+- Add SQL Server schemas and source-to-target integration
+- Implement and validate the selected Azure/Fabric workflow
+- Add Power BI reporting and documented operating procedures
+- Expand tests for historical changes, returns, and publication failures
 
 ## Discuss a Similar Project
 
-Zaryn Data Engineering provides Microsoft-focused data engineering services for manufacturing and wholesale distribution.
+Zaryn Data Engineering | Manufacturing & Wholesale Distribution
 
 Email: [admin@zaryndata.onmicrosoft.com](mailto:admin@zaryndata.onmicrosoft.com)
 
-Please share only a high-level business challenge initially; do not send credentials or confidential datasets.
+Do not send credentials or confidential datasets in an initial inquiry.

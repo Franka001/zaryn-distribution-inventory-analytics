@@ -1,0 +1,5 @@
+order_line_id,product_id,warehouse_id,ordered_qty,cancelled_qty,promised_date
+O1,P1,W1,10,0,2026-01-10
+O2,P2,W1,20,5,2026-01-12
+O3,P1,W2,8,8,2026-01-15
+O4,P3,W2,12,0,2026-02-10
